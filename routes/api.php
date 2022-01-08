@@ -18,15 +18,11 @@ use App\Http\Controllers\AuthenticationController;
 Route::prefix('auth')->group(function () {
     Route::post('/signup', [AuthenticationController::class, 'register']);
     Route::post('/login', [AuthenticationController::class, 'login']);
+    Route::post('/forgot-password', [AuthenticationController::class, 'sendPasswordResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
+    Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('password.reset');
 });
-
-
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/profile', function(Request $request) {
-        return auth()->user();
-    });
-
+    Route::get('/profile', [AuthenticationController::class, 'profile']);
     Route::post('/auth/logout', [AuthenticationController::class, 'logout']);
 });
-
